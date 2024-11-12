@@ -27,7 +27,7 @@ pieces = {0:"X", 1:"0"}
 turn = 0
 while end == False:
     move = -1
-    while 0 > int(move) and int(move) > 8:
+    while not(-1 < int(move) and int(move) < 9):
         try:
             move = input("Please enter a the square you want to use (eg, 0 - 8)")
             move = int(move)
@@ -37,5 +37,8 @@ while end == False:
         board[int(move) // 3][int(move) % 3] = pieces[turn % 2]
         print(f"{board[0][0]}|{board[0][1]}|{board[0][2]}\n ----\n{board[1][0]}|{board[1][1]}|{board[1][2]}\n ----\n{board[2][0]}|{board[2][1]}|{board[2][2]}\n")
         res = checkWin(board)
-        print(res)
+        if res != 0 and res != " ":
+            print(f"The winner is {res}")
+            end == True
+            break
         turn += 1
