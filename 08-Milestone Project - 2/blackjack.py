@@ -6,7 +6,7 @@ values = {'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8,
 
 class Player:
     
-    def __init__ (self, name = "bob", balance = 100):
+    def __init__ (self, name = "dealer", balance = 100):
         self.name = name
         self.balance = balance
         self.hand = []
@@ -57,7 +57,7 @@ def main():
     game = True
     name = input("Name: ")
     player = Player(name=name)
-    
+    dealer = Player()
     while game:
         contin = " "
         while contin not in ["Y", "N"]:
@@ -76,5 +76,6 @@ def main():
         bet = int(bet)
 
         deck = Deck()
+        deck.shuffle()
 
 main()
