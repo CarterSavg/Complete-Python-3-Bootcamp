@@ -77,5 +77,5 @@ def main():
 
         deck = Deck()
         deck.shuffle()
-
+        #TODO Create game (pull cards and let player get hit, then do the same for dealer dealer goes till they win or bust)
 main()
