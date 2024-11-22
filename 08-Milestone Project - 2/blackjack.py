@@ -66,15 +66,14 @@ def main():
         if contin == "N":
             game = False
             break
-        
-        bet = ""
 
-        while not bet.isdigit():
-            bet = input("How much are you betting")
-            
+        bet = ""
+        valid_bet = False
+        while not valid_bet:
+            bet = input(f"Balance {player.balance}\nHow much are you betting: ")
+            if bet.isdigit() and int(bet) <= player.balance:
+                valid_bet = True
         bet = int(bet)
-        print(bet)
-        print(player)
 
         deck = Deck()
 
