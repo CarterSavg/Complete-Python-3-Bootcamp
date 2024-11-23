@@ -37,8 +37,8 @@ class Player:
     def show_hand(self):
         temp = ""
         for card in self.hand:
-            temp += card.__str__()
-        return f"You have a total of {self.hand_value} with the following cards:\n {temp}"
+            temp += f"{card.__str__()}\n"
+        print(f"You have a total of {self.hand_value} with the following cards:\n{temp}")
 
     def __str__(self):
         return f"{self.name} has a balance of: {self.balance} and {self.wins} wins"
@@ -62,11 +62,8 @@ class Deck:
         # Note we remove one card from the list of all_cards
         return self.all_cards.pop()
         
-def deal_hand(dealer, player):
-    deck = Deck()
-    deck.shuffle()
-
-    for i in range(0,2):
+def deal_hand(dealer, player, deck):
+    for _ in range(0,2):
         card = deck.all_cards.pop()
         dealer.hand_value += card.value
         dealer.hand.append(card)
@@ -74,13 +71,36 @@ def deal_hand(dealer, player):
         player.hand_value += card.value
         player.hand.append(card)
 
-def get_bet(bet, player):
+def get_bet(player):
+    bet = ""
     valid_bet = False
     while not valid_bet:
         bet = input(f"Balance {player.balance}\nHow much are you betting: ")
         if bet.isdigit() and int(bet) <= player.balance:
             valid_bet = True
-    bet = int(bet)
+    return int(bet)
+
+def hit_me(player, deck):
+    hit = " "
+    game = True
+    while game:
+        hit = " "
+        while hit not in ["Y", "N"]:
+            player.show_hand()
+            hit = input("Do you want another card? (Y / N)")
+
+        if hit == "N":
+            game = False
+            break
+        elif hit == "Y":
+            card = deck.all_cards.pop()
+            player.hand_value += card.value
+            player.hand.append(card)
+        if player.hand_value > 21:
+            return False
+    return True
+def check_win():
+    pass
 
 def main():
 
@@ -97,12 +117,18 @@ def main():
             game = False
             break
 
-        bet = ""
-        get_bet(bet, player)
-
-        deal_hand(player = player, dealer = dealer)
+        bet = get_bet(player)
+        deck = Deck()
+        deck.shuffle()
+        deal_hand(dealer, player, deck)
         dealer.dealer_show()
-
-        
+        if not hit_me(player, deck):
+            print("BUST")
+            player.adjust_balance(-bet)
+        else:
+            if check_win(player, dealer, deck):
+                pass
+            else:#lose
+                pass
         #TODO Create game (pull cards and let player get hit, then do the same for dealer dealer goes till they win or bust)
 main()
