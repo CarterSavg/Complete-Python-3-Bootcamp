@@ -63,6 +63,7 @@ class Deck:
         return self.all_cards.pop()
         
 def deal_hand(dealer, player, deck):
+    '''Gives dealer and player both two cards'''
     for _ in range(0,2):
         card = deck.all_cards.pop()
         dealer.hand_value += card.value
@@ -72,6 +73,7 @@ def deal_hand(dealer, player, deck):
         player.hand.append(card)
 
 def get_bet(player):
+    '''Gets bet from player returns it as an int'''
     bet = ""
     valid_bet = False
     while not valid_bet:
@@ -81,6 +83,7 @@ def get_bet(player):
     return int(bet)
 
 def hit_me(player, deck):
+    '''Asks player if they want any more cards and keeps asking till they bust or they dont want anymore'''
     hit = " "
     game = True
     while game:
@@ -99,8 +102,18 @@ def hit_me(player, deck):
         if player.hand_value > 21:
             return False
     return True
-def check_win():
-    pass
+
+def check_win(player, dealer, deck):
+    '''Checks if the player has beaten the dealer. Dealer will keep adding cards till they win or they bust (True = win False = lose)'''
+    if player.hand_value == 21:
+        return True
+    while dealer.hand_value < player.hand_value and dealer.hand_value < 21:
+        card = deck.all_cards.pop()
+        dealer.hand_value += card.value
+        dealer.hand.append(card)
+    if dealer.hand_value > 21:
+        return True
+    return False
 
 def main():
 
