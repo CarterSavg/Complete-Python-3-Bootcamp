@@ -23,10 +23,12 @@ class Player:
         self.hand = []
         self.hand_value = 0
         self.wins = 0
+        self.aces = 0
 
     def clear_hand(self):
         self.hand = []
         self.hand_value = 0
+        self.aces = 0
 
     def adjust_balance(self, amount):
         self.balance += amount
@@ -39,6 +41,12 @@ class Player:
         for card in self.hand:
             temp += f"{card.__str__()}\n"
         print(f"You have a total of {self.hand_value} with the following cards:\n{temp}")
+    
+    def show_hand_dealer(self):
+        temp = ""
+        for card in self.hand:
+            temp += f"{card.__str__()}\n"
+        print(f"Dealer has a total of {self.hand_value} with the following cards:\n{temp}")
 
     def __str__(self):
         return f"{self.name} has a balance of: {self.balance} and {self.wins} wins"
@@ -67,9 +75,15 @@ def deal_hand(dealer, player, deck):
     for _ in range(0,2):
         card = deck.all_cards.pop()
         dealer.hand_value += card.value
+        
+        if card.value == 11:
+            dealer.aces += 1
+            
         dealer.hand.append(card)
         card = deck.all_cards.pop()
         player.hand_value += card.value
+        if card.value == 11:
+            player.aces += 1
         player.hand.append(card)
 
 def get_bet(player):
@@ -86,6 +100,8 @@ def hit_me(player, deck):
     '''Asks player if they want any more cards and keeps asking till they bust or they dont want anymore'''
     hit = " "
     game = True
+    if player.hand_value == 21:
+        return True
     while game:
         hit = " "
         while hit not in ["Y", "N"]:
@@ -100,7 +116,11 @@ def hit_me(player, deck):
             player.hand_value += card.value
             player.hand.append(card)
         if player.hand_value > 21:
-            return False
+            if player.aces == 0:
+                return False
+            else:
+                player.aces -= 1
+                player.hand_value -= 10
     return True
 
 def check_win(player, dealer, deck):
@@ -112,6 +132,11 @@ def check_win(player, dealer, deck):
         dealer.hand_value += card.value
         dealer.hand.append(card)
     if dealer.hand_value > 21:
+        if dealer.aces == 0:
+            return False
+        else:
+            dealer.aces -= 1
+            dealer.hand_value -= 10
         return True
     return False
 
@@ -122,6 +147,11 @@ def main():
     player = Player(name=name)
     dealer = Player()
     while game:
+        dealer.clear_hand()
+        player.clear_hand()
+        if player.balance <= 0:
+            print("You have no money left goodbye")
+            return
         contin = " "
         while contin not in ["Y", "N"]:
             contin = input("Do you want to keep playing? (Y / N)")
@@ -140,8 +170,16 @@ def main():
             player.adjust_balance(-bet)
         else:
             if check_win(player, dealer, deck):
-                pass
+                print("Win\n")
+                player.show_hand()
+                dealer.show_hand_dealer()
+                player.adjust_balance(bet)
+                player.wins += 1
             else:#lose
-                pass
+                print("Lose\n")
+                player.show_hand()
+                dealer.show_hand_dealer()
+                player.adjust_balance(-bet)
+        print(player)   
         #TODO Create game (pull cards and let player get hit, then do the same for dealer dealer goes till they win or bust)
 main()
